@@ -14,6 +14,23 @@ const adminDashboard = document.getElementById("admin-dashboard");
 
 const publishBtn = document.getElementById("publish-btn");
 
+const logoutBtn = document.getElementById("logout-btn");
+
+
+// ==========================================
+// AUTO LOGIN CHECK
+// ==========================================
+
+if (
+    localStorage.getItem("adminLoggedIn") === "true" &&
+    adminDashboard
+) {
+
+    loginScreen.style.display = "none";
+    adminDashboard.style.display = "block";
+
+}
+
 
 // ==========================================
 // LOGIN
@@ -28,8 +45,16 @@ if (loginBtn) {
             password.value.trim() === "wis2026"
         ) {
 
+            localStorage.setItem(
+                "adminLoggedIn",
+                "true"
+            );
+
+
             loginScreen.style.display = "none";
+
             adminDashboard.style.display = "block";
+
 
         } else {
 
@@ -44,18 +69,24 @@ if (loginBtn) {
 
 
 // ==========================================
-// ANNOUNCEMENTS
+// PUBLISH ANNOUNCEMENT
 // ==========================================
 
 if (publishBtn) {
 
     publishBtn.addEventListener("click", () => {
 
+
         const title =
-        document.getElementById("announcement-title-input").value;
+        document.getElementById(
+            "announcement-title-input"
+        ).value;
+
 
         const message =
-        document.getElementById("announcement-message-input").value;
+        document.getElementById(
+            "announcement-message-input"
+        ).value;
 
 
         localStorage.setItem(
@@ -70,7 +101,10 @@ if (publishBtn) {
         );
 
 
-        alert("Announcement published!");
+        alert(
+            "Announcement published!"
+        );
+
 
     });
 
