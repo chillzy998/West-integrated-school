@@ -1,3 +1,17 @@
+import { db, auth } from "./firebase-config.js";
+
+import {
+    collection,
+    addDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+import {
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
 // ==========================================
 // GET ELEMENTS
 // ==========================================
@@ -21,16 +35,23 @@ const logoutBtn = document.getElementById("logout-btn");
 // AUTO LOGIN CHECK
 // ==========================================
 
-if (
-    localStorage.getItem("adminLoggedIn") === "true" &&
-    adminDashboard
-) {
+onAuthStateChanged(auth, (user) => {
 
-    loginScreen.style.display = "none";
-    adminDashboard.style.display = "block";
+    if (user) {
 
-}
+        loginScreen.style.display = "none";
 
+        adminDashboard.style.display = "block";
+
+    } else {
+
+        loginScreen.style.display = "block";
+
+        adminDashboard.style.display = "none";
+
+    }
+
+});
 
 // ==========================================
 // LOGIN
@@ -38,35 +59,30 @@ if (
 
 if (loginBtn) {
 
-    loginBtn.addEventListener("click", () => {
+    loginBtn.addEventListener("click", async () => {
 
-        if (
-            username.value.trim() === "principal" &&
-            password.value.trim() === "wis2026"
-        ) {
+        try {
 
-            localStorage.setItem(
-                "adminLoggedIn",
-                "true"
+            await signInWithEmailAndPassword(
+
+                auth,
+
+                username.value.trim(),
+
+                password.value.trim()
+
             );
 
-
-            loginScreen.style.display = "none";
-
-            adminDashboard.style.display = "block";
-
-
-        } else {
+        } catch (error) {
 
             loginMessage.textContent =
-            "Incorrect username or password.";
+            "Incorrect email or password.";
 
         }
 
     });
 
 }
-
 
 // ==========================================
 // PUBLISH ANNOUNCEMENT
