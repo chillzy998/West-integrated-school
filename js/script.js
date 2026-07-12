@@ -373,11 +373,6 @@ if (resetPreferences) {
         }
 
 
-        alert(
-            "Preferences restored to default!"
-        );
-
-
     });
 
 }
