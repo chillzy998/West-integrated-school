@@ -1,0 +1,2 @@
+# West-integrated-school
+school
