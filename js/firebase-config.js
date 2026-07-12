@@ -9,7 +9,6 @@ import { getStorage } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-s
 
 const firebaseConfig = {
 
-    const firebaseConfig = {
   apiKey: "AIzaSyC3JfmwweJj3FcaPgzfpwxiMJwZm_hX7r8",
   authDomain: "wis-website-82f3d.firebaseapp.com",
   projectId: "wis-website-82f3d",
