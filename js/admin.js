@@ -109,3 +109,39 @@ if (publishBtn) {
     });
 
 }
+// ==========================================
+// GALLERY MANAGER
+// ==========================================
+
+const galleryBtn =
+document.getElementById("gallery-btn");
+
+
+if (galleryBtn) {
+
+    galleryBtn.addEventListener("click", () => {
+
+        alert("Gallery Manager coming soon!");
+
+    });
+
+}
+
+
+// ==========================================
+// CONTENT EDITOR
+// ==========================================
+
+const contentBtn =
+document.getElementById("content-btn");
+
+
+if (contentBtn) {
+
+    contentBtn.addEventListener("click", () => {
+
+        alert("Content Editor coming soon!");
+
+    });
+
+}
