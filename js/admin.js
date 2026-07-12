@@ -127,14 +127,8 @@ if (publishBtn) {
 
 }
 // ==========================================
-// GALLERY MANAGER DEMO
+// GALLERY MANAGER
 // ==========================================
-
-const galleryFile =
-document.getElementById("gallery-file");
-
-const galleryPreview =
-document.getElementById("gallery-preview");
 
 const galleryAddBtn =
 document.getElementById("gallery-add-btn");
@@ -142,130 +136,64 @@ document.getElementById("gallery-add-btn");
 const galleryStatus =
 document.getElementById("gallery-status");
 
-
-
-let selectedImage = "";
-
-
-// IMAGE PREVIEW
-
-if (galleryFile) {
-
-    galleryFile.addEventListener("change", () => {
-
-
-        const file =
-        galleryFile.files[0];
-
-
-        if (file) {
-
-
-            const reader =
-            new FileReader();
-
-
-            reader.onload = function(e) {
-
-
-                selectedImage =
-                e.target.result;
-
-
-                galleryPreview.src =
-                selectedImage;
-
-
-                galleryPreview.style.display =
-                "block";
-
-
-                galleryStatus.textContent =
-                "Image selected ✓";
-
-
-            };
-
-
-            reader.readAsDataURL(file);
-
-
-        }
-
-
-    });
-
-}
-
-
-
-// ADD IMAGE
+const galleryList =
+document.getElementById("gallery-list");
 
 if (galleryAddBtn) {
 
-    galleryAddBtn.addEventListener("click", () => {
+    galleryAddBtn.addEventListener("click", async () => {
 
+        const imageUrl =
+        document.getElementById("gallery-url").value.trim();
 
         const title =
-        document.getElementById(
-            "gallery-title"
-        ).value;
-
+        document.getElementById("gallery-title").value.trim();
 
         const description =
-        document.getElementById(
-            "gallery-description"
-        ).value;
+        document.getElementById("gallery-description").value.trim();
 
-
-
-        if (!selectedImage) {
-
+        if (!imageUrl || !title) {
 
             galleryStatus.textContent =
-            "Please select an image first.";
-
+            "Please enter an image URL and title.";
 
             return;
 
-
         }
 
+        try {
 
+            await addDoc(
+                collection(db, "gallery"),
+                {
+                    imageUrl: imageUrl,
+                    title: title,
+                    description: description,
+                    createdAt: serverTimestamp()
+                }
+            );
 
-        let gallery =
-        JSON.parse(
-            localStorage.getItem("demoGallery")
-        ) || [];
+            galleryStatus.textContent =
+            "Image added successfully! ✓";
 
+            document.getElementById("gallery-url").value = "";
 
+            document.getElementById("gallery-title").value = "";
 
-        gallery.push({
+            document.getElementById("gallery-description").value = "";
 
-            image: selectedImage,
-            title: title,
-            description: description
+        } catch (error) {
 
-        });
+            console.error(error);
 
+            galleryStatus.textContent =
+            "Failed to add image.";
 
-
-        localStorage.setItem(
-            "demoGallery",
-            JSON.stringify(gallery)
-        );
-
-
-
-        galleryStatus.textContent =
-        "Image added successfully ✓";
-
+        }
 
     });
 
 }
-
-
 // ==========================================
 // CONTENT EDITOR
 // ==========================================
