@@ -365,15 +365,55 @@ if (contentBtn) {
 
 }
 
+
 // ==========================================
-// LOGOUT
+// LOGOUT SYSTEM
 // ==========================================
 
-if (logoutBtn) {
+import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    logoutBtn.addEventListener("click", async () => {
 
-        await signOut(auth);
+const logoutBtn = document.getElementById("logout-btn");
+
+
+if(logoutBtn){
+
+    logoutBtn.addEventListener("click", () => {
+
+
+        const confirmLogout = confirm(
+            "Are you sure you want to logout?"
+        );
+
+
+        if(confirmLogout){
+
+            signOut(auth)
+
+            .then(() => {
+
+                alert("Logged out successfully!");
+
+                window.location.href = "index.html";
+
+            })
+
+
+            .catch((error) => {
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+                alert(
+                    "Logout failed. Please try again."
+                );
+
+            });
+
+        }
+
 
     });
 
