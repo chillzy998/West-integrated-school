@@ -1,4 +1,8 @@
+alert("STARTING");
+
 import { db, auth } from "./firebase-config.js";
+
+alert("AFTER FIREBASE");
 
 import {
     collection,
@@ -9,14 +13,15 @@ import {
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
+alert("AFTER FIRESTORE");
+
 import {
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-
-alert("JS IS ALIVE");
+alert("AFTER AUTH");
 // ==========================================
 // GET ELEMENTS
 // ==========================================
