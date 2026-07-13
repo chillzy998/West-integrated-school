@@ -210,7 +210,34 @@ async function loadGallery() {
     await getDocs(collection(db, "gallery"));
 
     querySnapshot.forEach((galleryDoc) => {
+     const deleteButtons =
+document.querySelectorAll(".delete-gallery");
 
+deleteButtons.forEach((button) => {
+
+    button.addEventListener("click", async () => {
+
+        const id = button.dataset.id;
+
+        try {
+
+            await deleteDoc(
+                doc(db, "gallery", id)
+            );
+
+            loadGallery();
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Failed to delete image.");
+
+        }
+
+    });
+
+});
         const data = galleryDoc.data();
 
         galleryList.innerHTML += `
