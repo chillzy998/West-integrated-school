@@ -1,4 +1,3 @@
-
 import { db, auth } from "./firebase-config.js";
 
 import {
@@ -20,23 +19,41 @@ import {
 // GET ELEMENTS
 // ==========================================
 
-const loginBtn = document.getElementById("login-btn");
+const loginBtn =
+document.getElementById("login-btn");
 
-const username = document.getElementById("username");
-const password = document.getElementById("password");
+const username =
+document.getElementById("username");
 
-const loginMessage = document.getElementById("login-message");
+const password =
+document.getElementById("password");
 
-const loginScreen = document.getElementById("login-screen");
-const adminDashboard = document.getElementById("admin-dashboard");
+const loginMessage =
+document.getElementById("login-message");
 
-const publishBtn = document.getElementById("publish-btn");
+const loginScreen =
+document.getElementById("login-screen");
 
-const logoutBtn = document.getElementById("logout-btn");
+const adminDashboard =
+document.getElementById("admin-dashboard");
 
+const publishBtn =
+document.getElementById("publish-btn");
+
+const logoutBtn =
+document.getElementById("logout-btn");
+
+const galleryAddBtn =
+document.getElementById("gallery-add-btn");
+
+const galleryStatus =
+document.getElementById("gallery-status");
+
+const galleryList =
+document.getElementById("gallery-list");
 
 // ==========================================
-// AUTO LOGIN CHECK
+// AUTH STATE
 // ==========================================
 
 onAuthStateChanged(auth, (user) => {
@@ -44,13 +61,13 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
 
         loginScreen.style.display = "none";
-
         adminDashboard.style.display = "block";
+
+        loadGallery();
 
     } else {
 
         loginScreen.style.display = "block";
-
         adminDashboard.style.display = "none";
 
     }
@@ -79,6 +96,8 @@ if (loginBtn) {
 
         } catch (error) {
 
+            console.error(error);
+
             loginMessage.textContent =
             "Incorrect email or password.";
 
@@ -89,71 +108,60 @@ if (loginBtn) {
 }
 
 // ==========================================
-// PUBLISH ANNOUNCEMENT
+// ANNOUNCEMENTS
 // ==========================================
 
 if (publishBtn) {
 
     publishBtn.addEventListener("click", () => {
 
-
         const title =
         document.getElementById(
             "announcement-title-input"
         ).value;
-
 
         const message =
         document.getElementById(
             "announcement-message-input"
         ).value;
 
-
         localStorage.setItem(
             "announcementTitle",
             title
         );
-
 
         localStorage.setItem(
             "announcementMessage",
             message
         );
 
-
         alert(
             "Announcement published!"
         );
 
-
     });
 
 }
+
 // ==========================================
-// GALLERY MANAGER
+// ADD GALLERY IMAGE
 // ==========================================
-
-const galleryAddBtn =
-document.getElementById("gallery-add-btn");
-
-const galleryStatus =
-document.getElementById("gallery-status");
-
-const galleryList =
-document.getElementById("gallery-list");
 
 if (galleryAddBtn) {
 
     galleryAddBtn.addEventListener("click", async () => {
 
         const imageUrl =
-        document.getElementById("gallery-url").value.trim();
+        document.getElementById("gallery-url")
+        .value.trim();
 
         const title =
-        document.getElementById("gallery-title").value.trim();
+        document.getElementById("gallery-title")
+        .value.trim();
 
         const description =
-        document.getElementById("gallery-description").value.trim();
+        document.getElementById("gallery-description")
+        .value.trim();
 
         if (!imageUrl || !title) {
 
@@ -167,24 +175,40 @@ if (galleryAddBtn) {
         try {
 
             await addDoc(
+
                 collection(db, "gallery"),
+
                 {
-                    imageUrl: imageUrl,
-                    title: title,
-                    description: description,
-                    createdAt: serverTimestamp()
+
+                    imageUrl,
+
+                    title,
+
+                    description,
+
+                    createdAt:
+                    serverTimestamp()
+
                 }
+
             );
 
             galleryStatus.textContent =
             "Image added successfully! ✓";
-             loadGallery();
-            
-            document.getElementById("gallery-url").value = "";
 
-            document.getElementById("gallery-title").value = "";
+            document.getElementById(
+                "gallery-url"
+            ).value = "";
 
-            document.getElementById("gallery-description").value = "";
+            document.getElementById(
+                "gallery-title"
+            ).value = "";
+
+            document.getElementById(
+                "gallery-description"
+            ).value = "";
+
+            loadGallery();
 
         } catch (error) {
 
@@ -197,83 +221,131 @@ if (galleryAddBtn) {
 
     });
 
-}
+    }
 // ==========================================
 // LOAD GALLERY
 // ==========================================
 
 async function loadGallery() {
 
+    if (!galleryList) return;
+
     galleryList.innerHTML = "";
 
-    const querySnapshot =
-    await getDocs(collection(db, "gallery"));
+    try {
 
-    querySnapshot.forEach((galleryDoc) => {
-     const deleteButtons =
-document.querySelectorAll(".delete-gallery");
+        const querySnapshot =
+        await getDocs(
+            collection(db, "gallery")
+        );
 
-deleteButtons.forEach((button) => {
+        querySnapshot.forEach((galleryDoc) => {
 
-    button.addEventListener("click", async () => {
+            const data =
+            galleryDoc.data();
 
-        const id = button.dataset.id;
+            galleryList.innerHTML += `
 
-        try {
+                <div class="gallery-item">
 
-            await deleteDoc(
-                doc(db, "gallery", id)
-            );
+                    <h3>${data.title}</h3>
 
-            loadGallery();
+                    <img
+                    src="${data.imageUrl}"
+                    style="width:100%;border-radius:12px;margin:10px 0;">
 
-        } catch (error) {
+                    <p>${data.description}</p>
 
-            console.error(error);
+                    <button
+                    class="btn delete-gallery"
+                    data-id="${galleryDoc.id}">
 
-            alert("Failed to delete image.");
+                        🗑 Delete
 
-        }
+                    </button>
 
-    });
+                </div>
 
-});
-        const data = galleryDoc.data();
+                <br>
 
-        galleryList.innerHTML += `
+            `;
 
-            <div class="gallery-item">
+        });
 
-                <h3>${data.title}</h3>
+        // ==========================================
+        // DELETE BUTTONS
+        // ==========================================
 
-                <img
-                src="${data.imageUrl}"
-                style="width:100%; border-radius:12px; margin:10px 0;">
+        const deleteButtons =
+        document.querySelectorAll(".delete-gallery");
 
-                <p>${data.description}</p>
+        deleteButtons.forEach((button) => {
 
-                <button
-                class="btn delete-gallery"
-                data-id="${galleryDoc.id}">
+            button.addEventListener("click", async () => {
 
-                    🗑 Delete
+                const confirmDelete =
+                confirm(
+                    "Delete this gallery image?"
+                );
 
-                </button>
+                if (!confirmDelete) return;
 
-            </div>
+                try {
 
-            <br>
+                    await deleteDoc(
 
-        `;
+                        doc(
+                            db,
+                            "gallery",
+                            button.dataset.id
+                        )
 
-    });
+                    );
+
+                    loadGallery();
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    alert(
+                        "Failed to delete image."
+                    );
+
+                }
+
+            });
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        galleryList.innerHTML =
+
+        "<p>Failed to load gallery.</p>";
+
+    }
 
 }
-window.addEventListener("DOMContentLoaded", () => {
 
-    loadGallery();
+// ==========================================
+// LOAD WHEN PAGE OPENS
+// ==========================================
 
-});
+window.addEventListener(
+
+    "DOMContentLoaded",
+
+    () => {
+
+        loadGallery();
+
+    }
+
+);
+
 // ==========================================
 // CONTENT EDITOR
 // ==========================================
@@ -281,12 +353,27 @@ window.addEventListener("DOMContentLoaded", () => {
 const contentBtn =
 document.getElementById("content-btn");
 
-
 if (contentBtn) {
 
     contentBtn.addEventListener("click", () => {
 
-        alert("Content Editor coming soon!");
+        alert(
+            "Content Editor coming soon!"
+        );
+
+    });
+
+}
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+if (logoutBtn) {
+
+    logoutBtn.addEventListener("click", async () => {
+
+        await signOut(auth);
 
     });
 
